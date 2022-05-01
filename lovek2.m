@@ -1,4 +1,4 @@
-function [k2, out] = lovek2(varargin)
+function [k2, out] = lovek2(zvec, dvec, varargin)
 %LOVEK2 Tidal Love number k2 from density profile.
 %   k2 = LOVEK2() returns ....
 %
@@ -32,7 +32,7 @@ function [k2, out] = lovek2(varargin)
 % ---------
 % Sterne 1939 as described in Buhler 2016.
 
-%% Input parsing
+%% Input handling
 % Zero inputs case, usage only
 if nargin == 0
     print_usage()
@@ -40,8 +40,18 @@ if nargin == 0
 end
 narginchk(0,inf);
 
+%% Climb up the radius with Buhler (2016) eq. 2
+dro = [-diff(dvec); dvec(end)];
+m = cumsum(dro.*zvec.^3);
+rhom = m./zvec.^3;
+eta = 0;
+for k=1:length(zvec)-1
+    deta = (6 - 6*(dvec(k)/rhom(k))*(eta + 1) + eta - eta^2)/zvec(k);
+    eta = eta + deta*(zvec(k+1) - zvec(k));
+end
+
 %% Return
-k2 = 0; % may as well use the latest...
+k2 = (3 - eta)/(2 + eta);
 out.iter = 0;
 
 end
