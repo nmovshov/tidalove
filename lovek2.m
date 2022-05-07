@@ -38,16 +38,22 @@ if nargin == 0
     print_usage()
     return
 end
-narginchk(0,inf);
+narginchk(2,inf);
+validateattributes(zvec,{'numeric'},{'real','finite','positive','vector'})
+validateattributes(dvec,{'numeric'},{'real','finite','positive','vector'})
+zvec = zvec(:);
+dvec = dvec(:);
+assert(isequal(size(zvec),size(dvec)))
 
 %% Climb up the radius with Buhler (2016) eq. 2
-dro = [-diff(dvec); dvec(end)];
-m = cumsum(dro.*zvec.^3);
-rhom = m./zvec.^3;
+m = dvec(1)*zvec(1)^3; % starting mass
+rhom = m/zvec(1)^3; % starting mean density
 eta = 0;
 for k=1:length(zvec)-1
-    deta = (6 - 6*(dvec(k)/rhom(k))*(eta + 1) + eta - eta^2)/zvec(k);
+    deta = (6 - 6*(dvec(k)/rhom)*(eta + 1) + eta - eta^2)/zvec(k);
     eta = eta + deta*(zvec(k+1) - zvec(k));
+    m = m + dvec(k+1)*(zvec(k+1)^3 - zvec(k)^3);
+    rhom = m/zvec(k+1)^3;
 end
 
 %% Return
