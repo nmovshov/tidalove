@@ -40,7 +40,7 @@ if nargin == 0
 end
 narginchk(2,inf);
 validateattributes(zvec,{'numeric'},{'real','finite','positive','vector'})
-validateattributes(dvec,{'numeric'},{'real','finite','positive','vector'})
+validateattributes(dvec,{'numeric'},{'real','finite','nonnegative','vector'})
 zvec = zvec(:);
 dvec = dvec(:);
 assert(isequal(size(zvec),size(dvec)))
