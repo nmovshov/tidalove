@@ -2,6 +2,7 @@ function T = validate(N)
 % VALIDATE Test k2 calculation against known cases.
 
 V = [];
+names = {};
 
 %% Uniform density
 zvec = linspace(1/N, 1, N);
@@ -10,6 +11,7 @@ k2_calc = lovek2(zvec,dvec);
 k2_expect = 1.5;
 k2_err = abs(k2_calc - k2_expect)/abs(k2_expect + eps);
 row = [k2_expect, k2_calc, k2_err];
+names{end+1} = 'Uniform density';
 V = [V; row];
 
 %% n=1 polytrope (approximating Jupiter-like planet)
@@ -30,6 +32,7 @@ k2_calc = lovek2(zvec,dvec);
 k2_expect = (15/pi^2) - 1;
 k2_err = abs(k2_calc - k2_expect)/abs(k2_expect + eps);
 row = [k2_expect, k2_calc, k2_err];
+names{end+1} = 'n=1 poly';
 V = [V; row];
 
 %% Tabelize
@@ -37,4 +40,5 @@ T = table();
 T.expected = V(:,1);
 T.calculated = V(:,2);
 T.rel_err = V(:,3);
+T.Properties.RowNames = names;
 end
